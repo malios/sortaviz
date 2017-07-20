@@ -1,0 +1,36 @@
+{
+    "name": "malios/sortaviz",
+    "description": "A command line tool to visualize sorting algorithms",
+    "keywords": [
+      "php",
+      "algorithm",
+      "sorting",
+      "cli"
+    ],
+    "authors": [
+      {
+        "name": "Mehmed Aliosman",
+        "email": "dev.mehmed.aliosman@gmail.com"
+      }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.0",
+        "symfony/console": "^3.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+      "psr-4": {
+        "Malios\\Sortavis\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "Malios\\Sortavis\\Test\\": "tests/"
+      }
+    },
+    "bin": ["sortavis"]
+}
