@@ -20,5 +20,5 @@ interface Observable
      * @param $data
      * @return mixed
      */
-    public function trigger(string $eventName, $data);
+    public function trigger(string $eventName, $data = null);
 }

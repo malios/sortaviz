@@ -75,7 +75,7 @@ class Collection implements Observable
      * {@inheritdoc}
      * @see Observable::trigger()
      */
-    public function trigger(string $eventName, $data)
+    public function trigger(string $eventName, $data = null)
     {
         if (isset($this->listeners[$eventName])) {
             foreach ($this->listeners[$eventName] as $listener) {

@@ -4,6 +4,7 @@ namespace Malios\Sortavis\Console;
 
 use Malios\Sortavis\Collection;
 use Malios\Sortavis\Sort;
+use Malios\Sortavis\Visualizer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -40,23 +41,15 @@ class VisualizeCommand extends Command
             return (float)$numAsString;
         }, explode(',', $inputString));
 
-        $iterations = 0;
         $collection = new Collection(...$numbers);
-        $collection->listen('check.lt', function ($data) use (&$iterations, $output, $collection) {
-            $iterations++;
-            $numbers = $collection->toArray();
-            $output->writeln("<info>Checking if {$numbers[$data[0]]} < {$numbers[$data[1]]}</info>");
-        });
-
-        $collection->listen('post.swap', function ($data) use ($output, $collection) {
-            $numbers = $collection->toArray();
-            $output->writeln("<info>Swapping {$numbers[$data[0]]} with {$numbers[$data[1]]}</info>");
-        });
+        $visualizer = new Visualizer($output, $collection, 'Bubble Sort', 300);
+        $visualizer->visualizeOnChange();
 
         Sort::bubbleSort($collection);
-        $output->writeln("Result: [" . join(', ', $collection->toArray()) . "]");
-        $output->writeln("<comment>Iterations: $iterations</comment>");
 
+        $collection->trigger('finish');
+
+        sleep(11111); // so the user can have time to analyze the results
     }
 
     private function prompt(InputInterface $input, OutputInterface $output, $promptString) : string
