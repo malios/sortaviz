@@ -2,107 +2,100 @@
 
 namespace Malios\Sortavis;
 
+use Malios\Sortavis\Algorithm\Algorithm;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Visualizer
 {
-    private $collection;
     private $output;
+    private $algorithm;
+    private $collection;
     private $pauseInMicroseconds;
     private $iterations = 0;
     private $operation = '';
-    private $numbersOutput = '';
-    private $algorithm = '';
+    private $swapIndexes = [];
+    private $comparedIndexes = [];
+    private $selectedIndexes = [];
     private $styles = [
         'currentCheck' => '<fg=black;bg=blue>%s</>',
         'swapX' => '<fg=black;bg=green>%s</>',
-        'swapY' => '<fg=black;bg=red>%s</>'
+        'swapY' => '<fg=black;bg=red>%s</>',
+        'selected' => '<fg=black;bg=yellow>%s</>',
     ];
 
     private $template = <<<EOD
-Iteration: %s | Operation: %s ? | Algorithm: %s
+Iteration: %s | Operation: %s | Algorithm: %s
 
 [%s]
 
 EOD;
 
-
     public function __construct(
         OutputInterface $output,
         Collection $collection,
-        string $algorithm,
+        Algorithm $algorithm,
         $pauseInMilliseconds = 300
     ) {
         $this->collection = $collection;
         $this->output = $output;
         $this->pauseInMicroseconds = $pauseInMilliseconds * 1000;
         $this->algorithm = $algorithm;
-        $this->numbersOutput = join(', ', $collection->toArray());
     }
 
     public function visualizeOnChange()
     {
         $this->iterations = 0;
-        $this->collection->listen('check.lt', function ($data) {
+        $this->algorithm->listen('check.lt', function (array $data) {
             $this->clear();
 
-            $numbers = $this->collection->toArray();
-            $this->operation = "{$numbers[$data[0]]} < {$numbers[$data[1]]}";
             $this->iterations++;
-            $this->numbersOutput = $this->join($numbers, ', ', function ($i, $v) use ($data) {
-                if ($i === $data[0] || $i === $data[1]) {
-                    return sprintf($this->styles['currentCheck'], $v);
-                }
-
-                return $v;
-            });
-
-            $this->updateView();
-            $this->pause();
-        });
-
-        $this->collection->listen('pre.swap', function ($data) {
-            $this->clear();
-
             $numbers = $this->collection->toArray();
-            $this->numbersOutput = $this->join($numbers, ', ', function ($i, $v) use ($data) {
-                if ($i === $data[0]) {
-                    return sprintf($this->styles['swapX'], $v);
-                }
-
-                if ($i === $data[1]) {
-                    return sprintf($this->styles['swapY'], $v);
-                }
-
-                return $v;
-            });
+            $this->operation = "{$numbers[$data[0]]} < {$numbers[$data[1]]}?";
+            $this->comparedIndexes = $data;
 
             $this->updateView();
+            $this->comparedIndexes = [];
+            $this->operation = '';
+
             $this->pause();
         });
 
-        $this->collection->listen('post.swap', function ($data) {
+        $this->algorithm->listen('pre.swap', function (array $data) {
             $this->clear();
+            $this->operation = "swap";
+            $this->swapIndexes = $data;
+            $this->updateView();
+            $this->swapIndexes = [];
+            $this->pause();
+        });
 
-            $numbers = $this->collection->toArray();
-            $this->numbersOutput = $this->join($numbers, ', ', function ($i, $v) use ($data) {
-                if ($i === $data[0]) {
-                    return sprintf($this->styles['swapY'], $v);
-                }
+        $this->algorithm->listen('post.swap', function (array $data) {
+            $this->clear();
+            $this->swapIndexes = [$data[1], $data[0]];
+            $this->updateView();
+            $this->operation = '';
+            $this->swapIndexes = [];
+            $this->pause();
+        });
 
-                if ($i === $data[1]) {
-                    return sprintf($this->styles['swapX'], $v);
-                }
-
-                return $v;
-            });
-
+        $this->algorithm->listen('select.index', function (int $index) {
+            $this->clear();
+            $this->selectedIndexes[] = $index;
             $this->updateView();
             $this->pause();
         });
 
-        $this->collection->listen('finish', function () {
-            $this->numbersOutput = join(', ', $this->collection->toArray());
+        $this->algorithm->listen('deselect.index', function (int $index) {
+            $this->clear();
+            $this->selectedIndexes = array_filter($this->selectedIndexes, function ($v) use ($index) {
+                return $v !== $index;
+            });
+            $this->updateView();
+            $this->pause();
+        });
+
+        $this->algorithm->listen('finish', function () {
+            $this->selectedIndexes = [];
             $this->clear();
             $this->updateView();
             $this->output->writeln('Finished...');
@@ -111,12 +104,35 @@ EOD;
 
     public function updateView()
     {
+        $numbers = $this->collection->toArray();
+        $numbersOutput = $this->join($numbers, ', ', function ($i, $v) {
+            if (count($this->swapIndexes) > 0 && $i === $this->swapIndexes[0]) {
+                return sprintf($this->styles['swapX'], $v);
+            }
+
+            if (count($this->swapIndexes) > 1 && $i === $this->swapIndexes[1]) {
+                return sprintf($this->styles['swapY'], $v);
+            }
+
+            if ($this->comparedIndexes
+                && ($i === $this->comparedIndexes[0]
+                    || $i === $this->comparedIndexes[1])) {
+                return sprintf($this->styles['currentCheck'], $v);
+            }
+
+            if (in_array($i, $this->selectedIndexes)) {
+                return sprintf($this->styles['selected'], $v);
+            }
+
+            return $v;
+        });
+
         $this->output->writeln(sprintf(
             $this->template,
             $this->iterations,
             $this->operation,
-            $this->algorithm,
-            $this->numbersOutput
+            $this->algorithm->getName(),
+            $numbersOutput
         ));
     }
 
