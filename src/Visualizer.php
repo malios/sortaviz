@@ -24,7 +24,7 @@ class Visualizer
     ];
 
     private $template = <<<EOD
-Iteration: %s | Operation: %s | Algorithm: %s
+Algorithm: %s | Iteration: %s | Operation: %s
 
 [%s]
 
@@ -102,7 +102,7 @@ EOD;
         });
     }
 
-    public function updateView()
+    private function updateView()
     {
         $numbers = $this->collection->toArray();
         $numbersOutput = $this->join($numbers, ', ', function ($i, $v) {
@@ -129,19 +129,19 @@ EOD;
 
         $this->output->writeln(sprintf(
             $this->template,
+            $this->algorithm->getName(),
             $this->iterations,
             $this->operation,
-            $this->algorithm->getName(),
             $numbersOutput
         ));
     }
 
-    public function pause()
+    private function pause()
     {
         usleep($this->pauseInMicroseconds);
     }
 
-    public function clear()
+    private function clear()
     {
         // todo: windows
         system('clear');
@@ -155,7 +155,7 @@ EOD;
      * @param callable $modifierFunc
      * @return string
      */
-    public function join(array $arr, $glue = "", callable $modifierFunc = null)
+    private function join(array $arr, $glue = "", callable $modifierFunc = null)
     {
         $result = '';
         $len = count($arr);

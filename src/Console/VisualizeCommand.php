@@ -36,7 +36,7 @@ class VisualizeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $algoName = $input->getOption('algo');
-        if (!isset($this->algorithms[$algoName])) { // todo
+        if (!isset($this->algorithms[$algoName])) {
             $output->writeln(sprintf(
                 "<error>Wrong algorithm %s \nAvailable options are [%s]</error>",
                 $algoName,
