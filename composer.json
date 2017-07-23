@@ -26,15 +26,15 @@
     "minimum-stability": "dev",
     "autoload": {
       "psr-4": {
-        "Malios\\Sortavis\\": "src/"
+        "Malios\\Sortaviz\\": "src/"
       }
     },
     "autoload-dev": {
       "psr-4": {
-        "Malios\\Sortavis\\Test\\": "tests/"
+        "Malios\\Sortaviz\\Test\\": "tests/"
       }
     },
-    "bin": ["sortavis"],
+    "bin": ["sortaviz"],
     "scripts": {
       "test": [
         "@cs-check",

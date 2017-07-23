@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Malios\Sortavis\Console;
+namespace Malios\Sortaviz\Console;
 
-use Malios\Sortavis\Algorithm\BubbleSort;
-use Malios\Sortavis\Algorithm\InsertionSort;
-use Malios\Sortavis\Algorithm\SelectionSort;
-use Malios\Sortavis\Collection;
-use Malios\Sortavis\Visualizer;
+use Malios\Sortaviz\Algorithm\BubbleSort;
+use Malios\Sortaviz\Algorithm\InsertionSort;
+use Malios\Sortaviz\Algorithm\SelectionSort;
+use Malios\Sortaviz\Collection;
+use Malios\Sortaviz\Visualizer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;

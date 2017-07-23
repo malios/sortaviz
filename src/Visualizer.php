@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Malios\Sortavis;
+namespace Malios\Sortaviz;
 
-use Malios\Sortavis\Algorithm\Algorithm;
+use Malios\Sortaviz\Algorithm\Algorithm;
+use Malios\Sortaviz\Algorithm\Event;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Visualizer
@@ -45,7 +46,7 @@ EOD;
     public function visualizeOnChange()
     {
         $this->iterations = 0;
-        $this->algorithm->listen('check.lt', function (array $data) {
+        $this->algorithm->listen(Event::CHECK_LESS_THAN, function (array $data) {
             $this->clear();
 
             $this->iterations++;
@@ -60,7 +61,7 @@ EOD;
             $this->pause();
         });
 
-        $this->algorithm->listen('pre.swap', function (array $data) {
+        $this->algorithm->listen(Event::PRE_SWAP, function (array $data) {
             $this->clear();
             $this->operation = "swap";
             $this->swapIndexes = $data;
@@ -69,7 +70,7 @@ EOD;
             $this->pause();
         });
 
-        $this->algorithm->listen('post.swap', function (array $data) {
+        $this->algorithm->listen(Event::POST_SWAP, function (array $data) {
             $this->clear();
             $this->swapIndexes = [$data[1], $data[0]];
             $this->updateView();
@@ -78,14 +79,14 @@ EOD;
             $this->pause();
         });
 
-        $this->algorithm->listen('select.index', function (int $index) {
+        $this->algorithm->listen(Event::SELECT_INDEX, function (int $index) {
             $this->clear();
             $this->selectedIndexes[] = $index;
             $this->updateView();
             $this->pause();
         });
 
-        $this->algorithm->listen('deselect.index', function (int $index) {
+        $this->algorithm->listen(Event::DESELECT_INDEX, function (int $index) {
             $this->clear();
             $this->selectedIndexes = array_filter($this->selectedIndexes, function ($v) use ($index) {
                 return $v !== $index;
@@ -94,7 +95,7 @@ EOD;
             $this->pause();
         });
 
-        $this->algorithm->listen('finish', function () {
+        $this->algorithm->listen(Event::FINISH, function () {
             $this->selectedIndexes = [];
             $this->clear();
             $this->updateView();

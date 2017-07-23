@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Malios\Sortavis\Algorithm;
+namespace Malios\Sortaviz\Algorithm;
 
-use Malios\Sortavis\Collection;
+use Malios\Sortaviz\Collection;
 
 class InsertionSort extends Algorithm
 {
@@ -17,18 +17,19 @@ class InsertionSort extends Algorithm
     {
         $len = $collection->count();
         for ($i = 0; $i < $len; $i++) {
-            $this->trigger('select.index', $i);
+            $this->trigger(Event::SELECT_INDEX, $i);
             for ($j = $i; $j > 0; $j--) {
-                $this->trigger('check.lt', [$j, $j - 1]);
+                $this->trigger(Event::CHECK_LESS_THAN, [$j, $j - 1]);
                 if (!$collection->lessThan($j, $j - 1)) {
                     break;
                 }
-                $this->trigger('pre.swap', [$j, $j - 1]);
+                $this->trigger(Event::PRE_SWAP, [$j, $j - 1]);
                 $collection->swap($j, $j - 1);
-                $this->trigger('post.swap', [$j, $j - 1]);
+                $this->trigger(Event::POST_SWAP, [$j, $j - 1]);
             }
-            $this->trigger('deselect.index', $i);
+            $this->trigger(Event::DESELECT_INDEX, $i);
         }
+        $this->trigger(Event::FINISH);
     }
 
     public function getName(): string

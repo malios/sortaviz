@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Malios\Sortavis\Algorithm;
+namespace Malios\Sortaviz\Algorithm;
 
-use Malios\Sortavis\Collection;
+use Malios\Sortaviz\Collection;
 
 class BubbleSort extends Algorithm
 {
@@ -18,15 +18,15 @@ class BubbleSort extends Algorithm
         $len = $collection->count();
         for ($i = 0; $i < $len; $i++) {
             for ($j = 0; $j < $len - $i - 1; $j++) {
-                $this->trigger('check.lt', [$j + 1, $j]);
+                $this->trigger(Event::CHECK_LESS_THAN, [$j + 1, $j]);
                 if ($collection->lessThan($j + 1, $j)) {
-                    $this->trigger('pre.swap', [$j, $j + 1]);
+                    $this->trigger(Event::PRE_SWAP, [$j, $j + 1]);
                     $collection->swap($j, $j + 1);
-                    $this->trigger('post.swap', [$j, $j + 1]);
+                    $this->trigger(Event::POST_SWAP, [$j, $j + 1]);
                 }
             }
         }
-        $this->trigger('finish');
+        $this->trigger(Event::FINISH);
     }
 
     public function getName(): string

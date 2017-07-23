@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Malios\Sortavis;
+namespace Malios\Sortaviz;
 
 interface Observable
 {

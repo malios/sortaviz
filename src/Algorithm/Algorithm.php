@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Malios\Sortavis\Algorithm;
+namespace Malios\Sortaviz\Algorithm;
 
-use Malios\Sortavis\Collection;
-use Malios\Sortavis\Observable;
+use Malios\Sortaviz\Collection;
+use Malios\Sortaviz\Observable;
 
 abstract class Algorithm implements Observable
 {

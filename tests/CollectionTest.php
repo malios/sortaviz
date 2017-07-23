@@ -1,8 +1,8 @@
 <?php
 
-namespace Malios\Sortavis\Test;
+namespace Malios\Sortaviz\Test;
 
-use Malios\Sortavis\Collection;
+use Malios\Sortaviz\Collection;
 use PHPUnit\Framework\TestCase;
 
 class CollectionTest extends TestCase

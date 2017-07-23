@@ -5,7 +5,7 @@ set_time_limit(0);
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Malios\Sortavis\Console\VisualizeCommand;
+use Malios\Sortaviz\Console\VisualizeCommand;
 
 $app = new Application();
 $app->add(new VisualizeCommand());

@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Malios\Sortavis\Algorithm;
+namespace Malios\Sortaviz\Algorithm;
 
-use Malios\Sortavis\Collection;
+use Malios\Sortaviz\Collection;
 
 class SelectionSort extends Algorithm
 {
@@ -18,20 +18,20 @@ class SelectionSort extends Algorithm
         $len = $collection->count();
         for ($i = 0; $i < $len - 1; $i++) {
             $min = $i;
-            $this->trigger('select.index', $i);
+            $this->trigger(Event::SELECT_INDEX, $i);
             for ($j = $i + 1; $j < $len; $j++) {
-                $this->trigger('check.lt', [$j, $min]);
+                $this->trigger(Event::CHECK_LESS_THAN, [$j, $min]);
                 if ($collection->lessThan($j, $min)) {
                     $min = $j;
-                    $this->trigger('select.index', $i);
+                    $this->trigger(Event::SELECT_INDEX, $i);
                 }
             }
 
-            $this->trigger('pre.swap', [$min, $i]);
+            $this->trigger(Event::PRE_SWAP, [$min, $i]);
             $collection->swap($min, $i);
-            $this->trigger('post.swap', [$min, $i]);
+            $this->trigger(Event::POST_SWAP, [$min, $i]);
         }
-        $this->trigger('finish');
+        $this->trigger(Event::FINISH);
     }
 
     public function getName(): string
